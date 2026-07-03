@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Alexa ✨</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body {
+            background: linear-gradient(135deg, #ffe5ec 0%, #ffb3c1 100%);
+            color: #333; height: 100vh; overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .container {
+            width: 100%; max-width: 420px; height: 85vh; background: white;
+            border-radius: 24px; box-shadow: 0 15px 35px rgba(255, 77, 109, 0.25);
+            position: relative; overflow: hidden; border: 3px solid #ff4d6d;
+        }
+        .page {
+            display: none; flex-direction: column; justify-content: center;
+            align-items: center; height: 100%; padding: 25px; text-align: center;
+            animation: slideIn 0.25s ease-out forwards;
+        }
+        .page.active { display: flex; }
+        @keyframes slideIn { from { transform: scale(0.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        h2 { color: #ff4d6d; margin-bottom: 12px; font-size: 1.5rem; }
+        p { font-size: 1.1rem; margin-bottom: 20px; color: #444; font-weight: 500; line-height: 1.4; }
+        .emoji { font-size: 3.2rem; margin-bottom: 12px; }
+        
+        /* Psycho Line Styling */
+        .psycho-line {
+            font-size: 0.85rem;
+            color: #ff758f;
+            font-style: italic;
+            margin-top: 15px;
+            font-weight: bold;
+            background: #fff0f3;
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+
+        input[type="text"] {
+            padding: 12px; font-size: 1.1rem; border: 2px solid #ff4d6d;
+            border-radius: 12px; text-align: center; outline: none; width: 80%; margin-bottom: 15px;
+        }
+        .btn-next {
+            background: #ff4d6d; color: white; border: none; padding: 12px 35px;
+            font-size: 1.1rem; border-radius: 25px; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3); transition: 0.2s; margin-top: auto;
+        }
+        .btn-next:active { transform: scale(0.95); }
+        .choice-btn {
+            background: white; border: 2px solid #ff4d6d; color: #ff4d6d;
+            padding: 10px 20px; margin: 6px; border-radius: 15px;
+            font-size: 0.95rem; cursor: pointer; font-weight: bold; transition: 0.2s;
+        }
+        .choice-btn:hover { background: #ff4d6d; color: white; }
+        .game-zone { position: relative; width: 100%; height: 110px; margin-top: 10px; }
+        .runaway-no {
+            position: absolute; left: 55%; top: 20px; background: #eee; color: #555;
+            border: 1px solid #ccc; padding: 10px 25px; border-radius: 15px; font-size: 1rem; cursor: pointer;
+        }
+        .static-yes {
+            position: absolute; left: 15%; top: 20px; background: #ff4d6d; color: white;
+            border: none; padding: 10px 25px; border-radius: 15px; font-size: 1rem; font-weight: bold; cursor: pointer;
+        }
+        .hold-btn { background: #333; color: white; padding: 14px 28px; border-radius: 50px; user-select: none; cursor: pointer; font-weight: bold; margin-bottom: 15px; }
+        .secret-box { width: 100%; min-height: 55px; margin-top: 5px; }
+        .secret-text {
+            opacity: 0; transition: opacity 0.4s ease; color: #ff4d6d; font-weight: bold;
+            font-size: 1.15rem; background: #fff0f3; padding: 10px; border-radius: 12px; border: 1px dashed #ff4d6d;
+        }
+        .progress-bar { position: absolute; top: 0; left: 0; height: 6px; background: #ff4d6d; transition: width 0.2s ease; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="progress-bar" id="progress"></div>
+
+        <!-- PAGE 1 -->
+        <div class="page active" id="p1">
+            <div class="emoji">🔒</div><h2>Security Check</h2><p>Yeh system sirf duniya ki sabse ziddi ladki ke liye locked hai. Nickname enter karo:</p>
+            <input type="text" id="nickname" placeholder="Hint: Be _ _">
+            <button class="btn-next" onclick="checkName()">Unlock ➔</button>
+            <p id="error-msg" style="color:red; font-size:0.9rem; display:none; margin-top: 10px;">Sahi naam dalo madam, dimaag mat khao! 👀</p>
+        </div>
+
+        <!-- PAGE 2 -->
+        <div class="page" id="p2"><div class="emoji">🎉</div><h2>Hello, Beta! 🥳</h2><p>Finally July 7th aa gaya! Mujhe pata tha tu nickname sahi hi dalegi. Aaj tera birthday hai toh bohot lamba torture jhelna padega. Ready?</p><button class="btn-next" onclick="nextPage(3)">Let's Start ➔</button></div>
+        
+        <!-- PAGE 3 -->
+        <div class="page" id="p3"><div class="emoji">📈</div><h2>Metric 1: Annoying Level</h2><p>Checking system database for your dramatic behaviors...</p><input type="range" min="1" max="100" value="100" style="width:80%; margin: 15px 0;" disabled><p style="color:#ff4d6d; font-weight:bold;">Result: 100% (Limit Crossed) 😂</p><button class="btn-next" onclick="nextPage(4)">Next Test ➔</button></div>
+        
+        <!-- PAGE 4 -->
+        <div class="page" id="p4"><div class="emoji">🎬</div><h2>The Reel Vibe</h2><p>Insta reels pe jo dimaag khane wale aur ajeeb pagal dost hote hain na? Tu bilkul waisi hi constant partner hai meri.</p><button class="btn-next" onclick="nextPage(5)">Sach me? ➔</button></div>
+        
+        <!-- PAGE 5 -->
+        <div class="page" id="p5"><div class="emoji">🕵️‍♂️</div><h2>Metric 2: Mind Reader</h2><p>Chalo scan karte hain ki jab mera chat aata hai toh tum kya sochti ho:</p><button class="choice-btn" onclick="document.getElementById('scan-res').innerText = 'Detected: Chehre pe smile toh aati hai par jaanbujh kar late reply karti ho taaki attitude dikhe!(or bss etna he aata hai mind mai because khali hai na😂)'">Scan My Brain</button><div class="secret-box"><p id="scan-res" style="font-weight:bold; color:#ff4d6d;"></p></div><button class="btn-next" onclick="nextPage(6)">Pakdi gayi! Next ➔</button></div>
+        
+        <!-- PAGE 6 -->
+        <div class="page" id="p6">
+            <div class="emoji">🤷‍♂️</div>
+            <h2>An Honest Truth</h2>
+            <p>Tu chahe jitni bhi dramebaaz ya annoying ho Alexa, par tere isi pagalpan ke bina mera poora din ekdum boring jata hai.</p>
+            <div class="psycho-line">⚠️ Vaise yeh sab jhoot hai, zyada serious mat lena! 😂</div>
+            <button class="btn-next" onclick="nextPage(7)">Achaa ji? ➔</button>
+        </div>
+        
+        <!-- PAGE 7 -->
+        <div class="page" id="p7"><div class="emoji">⚖️</div><h2>Metric 3: Priority Check</h2><p>Agar life me kabhi bore ho rahi ho, toh sabse best timepass kya lagta hai?</p><div><button class="choice-btn" onclick="wrongChoice()">Momos Khana</button><button class="choice-btn" onclick="nextPage(8)">Mujhe Tang Karna</button></div><p id="food-error" style="color:red; font-size:0.9rem; display:none; margin-top:10px;">Jhuti! Khana toh bahana hai, asli maza toh mujhe pareshan karne me aata hai!</p></div>
+        
+        <!-- PAGE 8 -->
+        <div class="page" id="p8">
+            <div class="emoji">🌙</div>
+            <h2>The 2 AM Factor</h2>
+            <p>Humari woh late-night wali faltu baatein, jiska subah koi logic nahi banta... unke bina mera ek din bhi poora nahi lagta.</p>
+            <div class="psycho-line">🤫 Par automatic generated text hai, dimaag pe mat lena.</div>
+            <button class="btn-next" onclick="nextPage(9)">True Story ➔</button>
+        </div>
+        
+        <!-- PAGE 9 -->
+        <div class="page" id="p9">
+            <div class="emoji">🥥</div>
+            <h2>Coconut Nature</h2>
+            <p>Bahar se tu duniya ke samne kitni bhi strict aur thandi banti hai, mujhe pata hai andar se tu kitni genuine aur care karne wali ladki hai.</p>
+            <div class="psycho-line">🛑 Joke tha! Maan kare toh serious le lena waise. 😉</div>
+            <button class="btn-next" onclick="nextPage(10)">Next Page ➔</button>
+        </div>
+        
+        <!-- PAGE 10 -->
+        <div class="page" id="p10"><div class="emoji">📝</div><h2>Metric 4: Digital Contract</h2><p>Sign karo ki tum officially maan chuki ho ki mere jaisa jhelne wala insaan dobara milna impossible hai:</p><div style="margin:15px 0;"><input type="checkbox" id="agreeBox" style="transform:scale(1.4); margin-right:10px;"><label for="agreeBox" style="font-weight:bold;">I Agree 100%</label></div><button class="btn-next" onclick="checkContract()">Sign Contract ➔</button></div>
+        
+        <!-- PAGE 11 -->
+        <div class="page" id="p11"><div class="emoji">🔒</div><h2>Deal Locked!</h2><p>Ab tumne sign kar diya hai, toh mujhe ignore karne ka ya ghost karne ka option tum humesha ke liye kho chuki ho!</p><button class="btn-next" onclick="nextPage(12)">Hehe Dekhte hain ➔</button></div>
+        
+        <!-- PAGE 12 -->
+        <div class="page" id="p12">
+            <div class="emoji">🔗</div>
+            <h2>The Connection</h2>
+            <p>Duniya me bohot log temporary hote hain, par hum dono ka yeh bacha-kucha dimaag aur connection ekdum permanent hai.</p>
+            <div class="psycho-line">🤖 And i wish hamesha easa ho.</div>
+            <button class="btn-next" onclick="nextPage(13)">Pakka? ➔</button>
+        </div>
+        
+        <!-- PAGE 13 -->
+        <div class="page" id="p13"><div class="emoji">😏</div><h2>Metric 5: Feedback Zone</h2><p>Sach batana, kya main tumhari life ka sabse favorite male bf hu </p><div class="game-zone"><button class="static-yes" onclick="nextPage(14)">YES, 100%!</button><button class="runaway-no" id="noBtn" onmouseover="moveNoButton()" ontouchstart="moveNoButton()">NO</button></div></div>
+        
+        <!-- PAGE 14 -->
+        <div class="page" id="p14"><div class="emoji">😌</div><h2>I Knew It!</h2><p>Tumhe 'YES' hi dabana tha, 'NO' toh system accept hi nahi karega mera. Teri aadat bohot achi se ho gayi hai mujhe.</p><button class="btn-next" onclick="nextPage(15)">Aage Chalo ➔</button></div>
+        
+        <!-- PAGE 15 -->
+        <div class="page" id="p15">
+            <div class="emoji">🧸</div>
+            <h2>My Comfort Zone</h2>
+            <p>Tu chahe jitni bhi pagal ho, par tu bina kahe meri har baat bohot aaram se samajh leti hai, aur yahi sabse sahi lagta hai mujhe.</p>
+            <div class="psycho-line">👀 Yeh sab jhoot hai waise, dil pe mat lagana bilkul bhi!</div>
+            <button class="btn-next" onclick="nextPage(16)">One Secret ➔</button>
+        </div>
+        
+        <!-- PAGE 16 -->
+        <div class="page" id="p16">
+            <div class="emoji">🤫</div>
+            <h2>Metric 6: Hold & Read</h2>
+            <p>Niche wale button ko press kar ke hold rakho, ek secret baat unlock hogi...</p>
+            <div class="hold-btn" onmousedown="showSecret()" onmouseup="hideSecret()" ontouchstart="showSecret()" ontouchend="hideSecret()">HOLD ME</div>
+            <div class="secret-box"><div class="secret-text" id="secretMsg">Main dikhata nahi hu, par teri smile aur teri khushi mere liye sach me sabse zyada matter karti hai. ❤️ (Serious mat lena... ya le bhi sakti ho? Who knows! 😜)</div></div>
+            <button class="btn-next" onclick="nextPage(17)">Next ➔</button>
+        </div>
+        
+        <!-- PAGE 17 -->
+        <div class="page" id="p17"><div class="emoji">🎂</div><h2>Happy Birthday, Alexa! 🎉</h2><p>May this July 7th bring you infinite success, dher saari khushiyan, aur dimaag jo thoda kam hai! Always stay the same.</p><button class="btn-next" onclick="nextPage(18)">Next ➔</button></div>
+        
+        <!-- PAGE 18 -->
+        <div class="page" id="p18"><div class="emoji">🍕</div><h2>The Treat Ultimatum</h2><p>Emotional baatein bohot ho gayi, ab jaldi batao birthday party kab de rahi ho? Is baar koi bahaana nahi chalega Beta!</p><button class="btn-next" onclick="nextPage(19)">Treat Confirmed ➔</button></div>
+        
+        <!-- PAGE 19 -->
+        <div class="page" id="p19">
+            <div class="emoji">🚫</div>
+            <h2>Reserved Seat</h2>
+            <p>Life me log aayenge aur jayenge, par meri jo special jagah hai na tere paas, use hamesha locked rakhna. No entry for others.</p>
+            <div class="psycho-line">⚠️ kabhi bhul mat jana mugha </div>
+            <button class="btn-next" onclick="nextPage(20)">Promise? ➔</button>
+        </div>
+        
+        <!-- PAGE 20 -->
+        <div class="page" id="p20"><div class="emoji">🦸‍♂️</div><h2>The Shield</h2><p>Zindagi me kabhi bhi koi problem ho, ya dimaag kharab ho, yaad rakhna tera yeh dost hamesha sabse pehle piche khada milega.</p><button class="btn-next" onclick="nextPage(21)">Aage Chalo ➔</button></div>
+        
+        <!-- PAGE 21 -->
+        <div class="page" id="p21"><div class="emoji">✨</div><h2>Are You Tired?</h2><p>Itne saare pages scroll kar liye tumne... Iska matlab tum mujhse sach me bohot pyaar karti ho aur meri baatein achi lagti hain. Hai na? 😉</p><button class="btn-next" onclick="nextPage(22)">Nahi toh! ➔</button></div>
+
+        <!-- PAGE 22 -->
+        <div class="page" id="p22">
+            <div class="emoji">⚡</div>
+            <h2>The Real Vibration</h2>
+            <p>Mazaak se hatke, jab tumhara mood off hota hai na, toh mera bhi poora din ajeeb nikalta hai. Itna deep connection ho gaya hai tumse.</p>
+            <div class="psycho-line">🤫 script writer ne zyadati kar di yahan, serious mat hona bilkul.</div>
+            <button class="btn-next" onclick="nextPage(23)">Deep... ➔</button>
+        </div>
+
+        <!-- PAGE 23 -->
+        <div class="page" id="p23"><div class="emoji">🎯</div><h2>The Final Level</h2><p>Maine yeh game sirf isliye nahi banaya ki aaj tumhara bday hai... balki isliye banaya kyuki main kuch bohot important kehna chahta hu.</p><button class="btn-next" onclick="nextPage(24)">Kya? ➔</button></div>
+
+        <!-- PAGE 24 -->
+        <div class="page" id="p24">
+            <div class="emoji">👀</div>
+            <h2>Look Closely</h2>
+            <p>Pichle saal me bohot cheezein badli, par ek cheez jo hamesha constant rahi... woh thi meri life me tumhari zaroorat aur importance.</p>
+            <div class="psycho-line">❌ Shhh... Kuch bhi jhoot bolta hu main bhi! Jyaada mat socho.</div>
+            <button class="btn-next" onclick="nextPage(25)">Click for Final Truth ➔</button>
+        </div>
+        
+        <!-- PAGE 25 -->
+        <div class="page" id="p25">
+            <div class="emoji">❤️</div>
+            <h2>The Unspoken Reality</h2>
+            <p>Tu chahe jitni bhi irritating aur dramebaaz ho Alexa, par sach yeh hai ki mera dil tere pe hi aake rukta hai. Tere bina life ekdum adhoori hai mere liye. Ab chal, thoda muskura de aur ab hamesha ke liye meri ho ja! ✨</p>
+            <div class="psycho-line">🔥 Last time bol raha hu: Sab jhoot hai, serious mat lena... ya dimaag chal raha ho toh serious le bhi lena! 😉❤️</div>
+            <button class="btn-next" onclick="alert('pagal hai kya yess pa click kr ri chl koi na aaj tera din hai bhai kuch bhe kr skti hai tu (chl Ab jaldi se instgram par aao aur review do) mujhe! 😂❤️')">Finish Game & Say YES 🎂</button>
+        </div>
+
+    </div>
+
+    <script>
+        function nextPage(num) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('p' + num).classList.add('active');
+            document.getElementById('progress').style.width = (num * 4) + '%';
+        }
+        function checkName() {
+            let name = document.getElementById('nickname').value.toLowerCase().trim();
+            if(name === 'beta') { nextPage(2); } else { document.getElementById('error-msg').style.display = 'block'; }
+        }
+        function moveNoButton() {
+            const btn = document.getElementById('noBtn');
+            const randomX = Math.floor(Math.random() * 160) - 80;
+            const randomY = Math.floor(Math.random() * 60) - 30;
+            btn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+        }
+        function wrongChoice() { document.getElementById('food-error').style.display = 'block'; }
+        function checkContract() {
+            if(document.getElementById('agreeBox').checked) { nextPage(11); } else { alert("Pehle tick maaro contract pe! 😤"); }
+        }
+        function showSecret() { document.getElementById('secretMsg').style.opacity = '1'; }
+        function hideSecret() { document.getElementById('secretMsg').style.opacity = '0'; }
+    </script>
+</body>
+</html>
